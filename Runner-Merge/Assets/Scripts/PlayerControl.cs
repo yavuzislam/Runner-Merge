@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    public TextMeshProUGUI text;
     public Animator[] anim;
     public GameObject player;
-    public bool set, collect;
+    public bool set, collect,finish;
     public int score = 0;
     public List<GameObject> stacklist;
     Vector3 scale;
@@ -27,6 +29,11 @@ public class PlayerControl : MonoBehaviour
                 player.transform.position = Vector3.Lerp(player.transform.position, new Vector3(3f, player.transform.position.y, player.transform.position.z), 1.5f * Time.deltaTime);
             }
         }
+        if (finish)
+        {
+            transform.position = Vector3.Lerp(transform.position, new Vector3(0f, transform.position.y, transform.position.z), 1.5f * Time.deltaTime);
+            player.transform.position = Vector3.Lerp(player.transform.position, new Vector3(0f, player.transform.position.y, player.transform.position.z), 1.5f * Time.deltaTime);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -41,7 +48,7 @@ public class PlayerControl : MonoBehaviour
             set = true;
             if (stacklist.Count != 0)
             {
-                transform.localScale = transform.localScale + new Vector3(0.1f, 0.1f, 0.1f) * stacklist.Count * 2;
+                transform.localScale = transform.localScale + new Vector3(0.1f, 0.1f, 0.1f) * stacklist.Count;
             }
             else
             {
@@ -54,6 +61,7 @@ public class PlayerControl : MonoBehaviour
             if (!collect)
             {
                 stacklist.Add(other.gameObject);
+                text.text = stacklist.Count.ToString();
                 score++;
                 Destroy(other.gameObject);
                 Debug.Log(score);
@@ -70,6 +78,9 @@ public class PlayerControl : MonoBehaviour
         else if (other.tag == "Finish")
         {
             gameManager.Win();
+            finish= true;
+            anim[0].SetBool("dance", true);
+            anim[1].SetBool("dance", true);
         }
     }
     private void OnTriggerExit(Collider other)
@@ -78,6 +89,7 @@ public class PlayerControl : MonoBehaviour
         {
             collect = false;
             other.transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().enabled = true;
+            transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().material.color = Color.green;
             transform.localScale = scale;
             set = false;
         }

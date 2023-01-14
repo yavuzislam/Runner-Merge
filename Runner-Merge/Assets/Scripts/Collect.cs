@@ -8,18 +8,19 @@ public class Collect : MonoBehaviour
 {
     public GameManager gameManager;
     public PlayerControl playerControl;
-    private void Awake()
-    {
-        transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().material.color= Color.red;
-    }
+    //private void Awake()
+    //{
+    //    transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().material.color= Color.red;
+    //}
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Collect")
         {
             if (!playerControl.collect)
             {
-                //playerControl.stacklist.Add(other.gameObject);
-                //playerControl.score++;
+                playerControl.stacklist.Add(other.gameObject);
+                playerControl.text.text = playerControl.stacklist.Count.ToString();
+                playerControl.score++;
                 Destroy(other.gameObject);
                 Debug.Log(playerControl.score);
             }
